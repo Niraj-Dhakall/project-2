@@ -1,0 +1,7 @@
+INT PRINT What should we count up to?
+INT INPUT [1]
+ADD [0] 1 [0]
+INT PRINT [0]
+CMP [0] [1]
+JL 2
+HLT

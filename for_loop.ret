@@ -1,0 +1,8 @@
+add [0] 1 [0]
+cmp [0] 10
+int print [0]
+jl 0
+hlt
+
+
+

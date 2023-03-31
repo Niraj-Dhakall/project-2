@@ -1,0 +1,19 @@
+INT PRINT Enter a number and we will test it for primality:
+INT INPUT [0]
+MOV [3] [0]
+MOV [2] 1
+MOV [1] 2
+CMP [1] [3]
+JE 12
+MOD [2] [0] [1]
+CMP [2] 0
+JE 16
+ADD [1] [1] 1
+JMP 5
+CMP [2] 0
+JE 16
+INT PRINT The number is prime
+JMP 17
+INT PRINT The number is composite
+HLT
+

@@ -1,0 +1,9 @@
+INT PRINT Enter two numbers
+INT INPUT [0]
+INT INPUT [1]
+CMP [0] [1]
+JE 7
+INT PRINT The numbers are not equal
+JMP 8
+INT PRINT The numbers are equal
+HLT

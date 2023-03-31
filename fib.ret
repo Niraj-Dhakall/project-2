@@ -1,0 +1,11 @@
+INT PRINT How many fibonacci numbers do you want to compute?
+INT INPUT [0]
+MOV [3] 1
+INT PRINT [1]
+ADD [1] [2] [3]
+MOV [3] [2]
+MOV [2] [1]
+ADD [4] [4] 1
+CMP [4] [0]
+JNE 3
+HLT
