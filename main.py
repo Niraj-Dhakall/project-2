@@ -1,7 +1,38 @@
-def computer(userInput):
-    userInput = userInput.split()
-    programMemory = []
-    randomMemory = []
+def interrupt(userInput, memory):
+    printString = ['print', 'PRINT']
+    inputString = ['input','INPUT']
+    if(userInput[1] in printString):
+        printMessage = userInput[2:]
+        print(' '.join(printMessage))
+    elif(userInput[1] in inputString):
+        intterruptInput = int(input(''))
+        inputIndex = userInput[2].strip('[]')
+        memory[int(inputIndex)] = intterruptInput
+def jump(userInput, memory):
+    jlString = ['jl','JL']
+    jgString = ['jg','JG']
+    jeString = ['je','JE']
+    jneString = ['jne','JNE']
+def operationCommands(line,memory):
+    print("Hello world")
+def moveCommand(line,memory):
+    bracketString = '['
+    moveSource = line[2]
+    moveDestination = int(line[1].strip('[]'))
+    if (bracketString in moveSource):
+        tempMoveSource = 0
+        sourceValue = 0
+        tempMoveSource = int(line[2].strip('[]'))
+        sourceValue = memory[int(moveDestination)]
+        memory[int(moveDestination)] = memory[tempMoveSource]
+        memory[tempMoveSource] = int(sourceValue)
+        print(memory)
+    else:
+        moveSource = int(line[2])
+        memory[int(moveDestination)] = moveSource
+        print(memory)
+
+def runCommands(line,memory):
     haltString = ['hlt','HLT']
     movString = ['mov','MOV']
     addString = ['add','ADD']
@@ -11,20 +42,29 @@ def computer(userInput):
     modString = ['mod','MOD']
     jmpString = ['jmp','JMP']
     cmpString = ['cmp','CMP']
-    jlString = ['jl','JL']
-    jgString = ['jg','JG']
-    jeString = ['je','JE']
-    jneString = ['jne','JNE']
+    intString = ['int','INT']
+    if (line[0] in intString):
+        interrupt(line,memory)
+    if(line[0] in movString):
+        moveCommand(line,memory)
+def computer(userInput):
+    userInput = userInput.split()
+    programMemory = []
+    randomMemory = []
+
+
     for x in range(int(userInput[1])):
-        randomMemory.append("0")
+        randomMemory.append(0)
     print(randomMemory)
     infile = open(userInput[0],'r')
     for j in range(len(randomMemory)):
         line = infile.readline().split()
-        print(line)
+        runCommands(line,randomMemory)
+    print(randomMemory)
 
 
 
 if __name__ == '__main__':
-    userInput = input("What file should we assemble, and what size of ram should we use?")
+    userInput = 'is_prime.ret 10'
+
     computer(userInput)
