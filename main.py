@@ -13,7 +13,8 @@ def jump(userInput, memory):
     jgString = ['jg','JG']
     jeString = ['je','JE']
     jneString = ['jne','JNE']
-def operationCommands(line,memory):
+    print("this is jumping shit")
+def operationCommands(userInput,memory):
     print("Hello world")
 def moveCommand(line,memory):
     bracketString = '['
@@ -26,13 +27,32 @@ def moveCommand(line,memory):
         sourceValue = memory[int(moveDestination)]
         memory[int(moveDestination)] = memory[tempMoveSource]
         memory[tempMoveSource] = int(sourceValue)
-        print(memory)
     else:
         moveSource = int(line[2])
         memory[int(moveDestination)] = moveSource
-        print(memory)
+def compareCommand(line,memory):
+    bracketString = '['
+    lessThan = False
+    equalTo = False
+    compareValue1 = line[1]
+    compareValue2 = line[2]
+    if (bracketString in compareValue1) and (bracketString in compareValue2):
+        compareValue1 = int(line[1].strip('[]'))
+        compareValue2 = int(line[2].strip('[]'))
+        if memory[compareValue1] < memory[compareValue2]:
+            lessThan = True
+        elif memory[compareValue1] == memory[compareValue2]:
+            equalTo = True
+    else:
+        compareValue1 = int(line[1].strip('[]'))
+        compareValue2 = int(line[2])
+        if memory[compareValue1] < compareValue2:
+            lessThan = True
+        elif memory[compareValue1] == compareValue2:
+            equalTo = True
 
-def runCommands(line,memory):
+def runCommands(line,memory, programMemory):
+
     haltString = ['hlt','HLT']
     movString = ['mov','MOV']
     addString = ['add','ADD']
@@ -40,27 +60,32 @@ def runCommands(line,memory):
     mulString = ['mul','MUL']
     divString = ['div','DIV']
     modString = ['mod','MOD']
-    jmpString = ['jmp','JMP']
+    jmpString = 'j'
     cmpString = ['cmp','CMP']
     intString = ['int','INT']
     if (line[0] in intString):
         interrupt(line,memory)
+        programMemory.append(line)
     if(line[0] in movString):
         moveCommand(line,memory)
+        programMemory.append(line)
+    if(line[0] in cmpString):
+        compareCommand(line,memory)
+        programMemory.append(line)
+    if(jmpString in line[0].lower()):
+        jump(line,memory)
+        programMemory.append(line)
 def computer(userInput):
     userInput = userInput.split()
-    programMemory = []
     randomMemory = []
-
+    programMemory = []
 
     for x in range(int(userInput[1])):
         randomMemory.append(0)
-    print(randomMemory)
     infile = open(userInput[0],'r')
     for j in range(len(randomMemory)):
         line = infile.readline().split()
-        runCommands(line,randomMemory)
-    print(randomMemory)
+        runCommands(line,randomMemory,programMemory)
 
 
 
