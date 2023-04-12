@@ -48,9 +48,7 @@ def operationCommands(userInput,memory):
             addedValue = parameterFour + memory[locationOne]
         else:
             addedValue = parameterThree + parameterFour
-    print(memory)
     memory[strip(parameterTwo,'[]')] = addedValue
-    print(memory)
 
 def moveCommand(line,memory):
     bracketString = '['
@@ -78,10 +76,8 @@ def compareCommand(line,memory):
         compareValue2 = int(strip(line[2],'[]'))
         if memory[compareValue1] < memory[compareValue2]:
             lessThan = True
-            print(f"{memory[compareValue1]} is smaller than {memory[compareValue2]}")
         elif memory[compareValue1] == memory[compareValue2]:
             equalTo = True
-            print(f"{memory[compareValue1]} is equal to {memory[compareValue2]}")
     else:
         compareValue1 = int(strip(line[1],'[]'))
         compareValue2 = int(line[2])
@@ -123,7 +119,6 @@ def computer(userInput):
     while programMemory[instructionCounter] not in haltString:
         if haltString not in programMemory[instructionCounter]:
             line = programMemory[instructionCounter]
-            print(line)
             if (programMemory[instructionCounter][0] in intString):
                 interrupt(line,randomMemory)
                 if instructionCounter + 1 < len(programMemory):
@@ -139,7 +134,6 @@ def computer(userInput):
             elif(jmpString in programMemory[instructionCounter][0]):
                 if jump(line,randomMemory,compareList) == 1:
                     jumpLine = programMemory[instructionCounter][1]
-                    print(f"this is the line to jump to: {jumpLine}")
                     instructionCounter = int(jumpLine)
                 else:
                     if instructionCounter + 1 < len(programMemory):
@@ -151,6 +145,6 @@ def computer(userInput):
 
 
 if __name__ == '__main__':
-    userInput = 'for_loop.ret 10'
+    userInput = 'for_loop_2.ret 10'
 
     computer(userInput)
