@@ -18,7 +18,8 @@ def jump(userInput, memory, compareList):
     jeString = ['je','JE']
     jneString = ['jne','JNE']
     if userInput[0] in jlString:
-        print("hello this is jumping")
+        if compareList[0]:
+            return 1
 
 def operationCommands(userInput,memory):
     parameterOne = userInput[0]
@@ -136,9 +137,13 @@ def computer(userInput):
                 if instructionCounter + 1 < len(programMemory):
                     instructionCounter+=1
             elif(jmpString in programMemory[instructionCounter][0]):
-                jump(line,randomMemory,compareList)
-                if instructionCounter + 1 < len(programMemory):
-                    instructionCounter+=1
+                if jump(line,randomMemory,compareList) == 1:
+                    jumpLine = programMemory[instructionCounter][1]
+                    print(f"this is the line to jump to: {jumpLine}")
+                    instructionCounter = int(jumpLine)
+                else:
+                    if instructionCounter + 1 < len(programMemory):
+                        instructionCounter+=1
             elif(programMemory[instructionCounter][0] in operationStrings):
                 operationCommands(line,randomMemory)
                 if instructionCounter + 1 < len(programMemory):
