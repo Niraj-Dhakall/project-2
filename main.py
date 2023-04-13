@@ -9,7 +9,7 @@ def interrupt(userInput, memory):
             printMessage = userInput[2:]
             print(' '.join(printMessage))
     elif(userInput[1] in inputString):
-        intterruptInput = int(input(''))
+        intterruptInput = int(input('>> '))
         inputIndex = strip(userInput[2],'[]')
         memory[int(inputIndex)] = intterruptInput
 
@@ -21,6 +21,7 @@ def jump(userInput, memory, compareList):
     jgeString = ['jge','JGE']
     jleString = ['jle','JLE']
     jmpString = ['jmp','JMP']
+    # compare list in the format : lessThan, equalTo
     if userInput[0] in jlString: # this is for jumping if less than. Returns 1 if values are less than each other
         if compareList[0]:
             return 1
@@ -199,6 +200,6 @@ def computer(userInput):
 
 
 if __name__ == '__main__':
-    userInput = 'is_prime.ret 10'
+    userInput = 'fib.ret 20'
 
     computer(userInput)
