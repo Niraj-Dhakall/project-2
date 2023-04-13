@@ -20,6 +20,7 @@ def jump(userInput, memory, compareList):
     jneString = ['jne','JNE']
     jgeString = ['jge','JGE']
     jleString = ['jle','JLE']
+    jmpString = ['jmp','JMP']
     if userInput[0] in jlString: # this is for jumping if less than. Returns 1 if values are less than each other
         if compareList[0]:
             return 1
@@ -38,6 +39,8 @@ def jump(userInput, memory, compareList):
     if userInput[0] in jleString: # this is for jumping if less than or equal to. Returns 1 if values are less than or equal to
         if compareList[0] or compareList[1]:
             return 1
+    if userInput[0] in jmpString:
+        return 1
 def operationCommands(userInput,memory):
     parameterOne = userInput[0]
     parameterTwo = userInput[1]
@@ -51,21 +54,49 @@ def operationCommands(userInput,memory):
     bracketString = '['
     locationOne = -1
     locationTwo = -1
-    addedValue = -1
+    printValue = -1
     if parameterOne in addString:
         if (bracketString in parameterThree) and (bracketString in parameterFour):
             locationOne = strip(parameterThree,'[]')
             locationTwo = strip(parameterFour,'[]')
-            addedValue = memory[locationOne] + memory[locationTwo]
+            printValue = memory[locationOne] + memory[locationTwo]
         elif(bracketString not in parameterThree and bracketString in parameterFour):
             locationTwo = strip(parameterFour,'[]')
-            addedValue = int(parameterThree) + memory[locationTwo]
+            printValue = int(parameterThree) + memory[locationTwo]
         elif(bracketString in parameterThree and bracketString not in parameterFour):
             locationOne = strip(parameterThree,'[]')
-            addedValue = int(parameterFour) + memory[locationOne]
+            printValue = int(parameterFour) + memory[locationOne]
         else:
-            addedValue = parameterThree + parameterFour
-    memory[strip(parameterTwo,'[]')] = addedValue
+            printValue = int(parameterThree) + int(parameterFour)
+    elif parameterOne in subString:
+        if (bracketString in parameterThree) and (bracketString in parameterFour): # this is [location1] - [location2]
+            locationOne = strip(parameterThree,'[]')
+            locationTwo = strip(parameterFour,'[]')
+            printValue = memory[locationTwo] - memory[locationOne]
+        elif(bracketString not in parameterThree and bracketString in parameterFour): # this is value1 (parameter3) - (p4)[location2]
+            locationTwo = strip(parameterFour,'[]')
+            printValue =  memory[locationTwo] - int(parameterThree)
+        elif(bracketString in parameterThree and bracketString not in parameterFour):# this is [location1](parameter3) - value2(p4)
+            locationOne = strip(parameterThree,'[]')
+            printValue = parameterFour - memory[locationOne]
+        else:
+            printValue = parameterFour - parameterThree
+    elif parameterOne in mulString:
+        if (bracketString in parameterThree) and (bracketString in parameterFour):
+            locationOne = strip(parameterThree,'[]')
+            locationTwo = strip(parameterFour,'[]')
+            printValue = memory[locationOne] * memory[locationTwo]
+        elif(bracketString not in parameterThree and bracketString in parameterFour):
+            locationTwo = strip(parameterFour,'[]')
+            printValue = int(parameterThree) * memory[locationTwo]
+        elif(bracketString in parameterThree and bracketString not in parameterFour):
+            locationOne = strip(parameterThree,'[]')
+            printValue = parameterFour * memory[locationOne]
+        else:
+            printValue = parameterThree * parameterFour
+    elif parameterOne in divString:
+        print("Hello")
+    memory[strip(parameterTwo,'[]')] = printValue
 
 def moveCommand(line,memory):
     bracketString = '['
@@ -121,7 +152,7 @@ def computer(userInput):
     haltString = ['hlt','HLT']
     movString = ['mov','MOV']
     operationStrings = ['mod','MOD','div','DIV','mul','MUL','sub','SUB','add','ADD']
-    jmpString = 'j'
+    jString = 'j'
     cmpString = ['cmp','CMP']
     intString = ['int','INT']
     instructionCounter = 0
@@ -154,7 +185,7 @@ def computer(userInput):
                 compareList = compareCommand(line,randomMemory)
                 if instructionCounter + 1 < len(programMemory):
                     instructionCounter+=1
-            elif(jmpString in programMemory[instructionCounter][0].lower()):
+            elif(jString in programMemory[instructionCounter][0].lower()):
                 if jump(line,randomMemory,compareList) == 1:
                     jumpLine = programMemory[instructionCounter][1]
                     instructionCounter = int(jumpLine)
@@ -168,6 +199,6 @@ def computer(userInput):
 
 
 if __name__ == '__main__':
-    userInput = 'fib.ret 20'
+    userInput = 'is_prime.ret 10'
 
     computer(userInput)
