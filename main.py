@@ -66,6 +66,7 @@ def jump(userInput, memory, compareList):
         if compareList[0] or compareList[1]:
             return 1
     if userInput[0] in jmpString:
+        print("jump 5 just happened")
         return 1
 '''
 The operationCommands() function represents addition, subtraction, multiplication, division, and modulus operations.
@@ -151,20 +152,20 @@ def operationCommands(userInput,memory):
         else:
             if int(parameterFour) != 0:
                 printValue = parameterThree // parameterFour
-    else:
+    elif parameterOne in modString:
         if (bracketString in parameterThree) and (bracketString in parameterFour):
             locationOne = strip(parameterThree,'[]')
             locationTwo = strip(parameterFour,'[]')
             printValue = memory[locationOne] % memory[locationTwo]
-        elif(bracketString not in parameterThree and bracketString in parameterFour):
+        elif(bracketString not in parameterThree) and (bracketString in parameterFour):
             locationTwo = strip(parameterFour,'[]')
             printValue = int(parameterThree) % memory[locationTwo]
-        elif(bracketString in parameterThree and bracketString not in parameterFour):
+        elif(bracketString in parameterThree) and (bracketString not in parameterFour):
             locationOne = strip(parameterThree,'[]')
             printValue = memory[locationOne] % int(parameterFour)
         else:
-
             printValue = parameterThree % parameterFour
+
     memory[strip(parameterTwo,'[]')] = printValue
 '''
 The moveCommand() function is used to move values within RAM. 
@@ -258,7 +259,7 @@ def computer(userInput):
 
     line = infile.readline().split()
     while not stopReading:
-        if line[0] in haltString:
+        if haltString in line[0].lower():
             programMemory.append(line)
             stopReading = True
         else:
@@ -268,6 +269,7 @@ def computer(userInput):
 
     while keepRunning:
         line = programMemory[instructionCounter]
+        print(programMemory[instructionCounter])
         if (programMemory[instructionCounter][0] in intString): # for interrupt command
             interrupt(line,randomMemory)
             if instructionCounter + 1 < len(programMemory):
@@ -283,6 +285,7 @@ def computer(userInput):
         elif(jString in programMemory[instructionCounter][0].lower()): # for jumping commands
             if jump(line,randomMemory,compareList) == 1: # if condition for jump is met, this runs
                 jumpLine = programMemory[instructionCounter][1]
+                print("jump just happened")
                 instructionCounter = int(jumpLine)
             else:
                 if instructionCounter + 1 < len(programMemory): # if condition for jump is not met, this run
