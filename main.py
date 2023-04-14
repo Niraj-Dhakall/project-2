@@ -1,3 +1,23 @@
+"""
+File:         retriever_asm.py
+Author:       Niraj Dhakal
+Date:         4/13/2023
+Section:      16
+E-mail:       nirajd1@umbc.edu
+Description: simulate a very simplified computer running a very simplified assembly language which is modeled after the
+x86 assembly language.
+
+"""
+
+
+
+'''
+The intterupt() funtion is used to run the INT command. This function takes in the userInput, which in this case is the
+line and takes in the ram. Then it checks if the command after INT is PRINT. If it is then it will check if the command
+after PRINT has brackets or not. If it does then it will print the value in RAM at that given index, else it will print
+the value. If the command after INT is INPUT then it will prompt an input from the user and store it in the given index
+in RAM
+'''
 def interrupt(userInput, memory):
     printString = ['print', 'PRINT']
     inputString = ['input','INPUT']
@@ -9,10 +29,15 @@ def interrupt(userInput, memory):
             printMessage = userInput[2:]
             print(' '.join(printMessage))
     elif(userInput[1] in inputString):
-        intterruptInput = int(input('>> '))
+        intterruptInput = int(input('>>> '))
         inputIndex = strip(userInput[2],'[]')
         memory[int(inputIndex)] = intterruptInput
-
+'''
+The jump() function is used to jump lines. It takes in the user input, the RAM, and a list that has two
+bools from the compare() function. The first bool representing lessThan, the second equalTo. The jump
+function then will check the command against seven different conditions and will return 1 if the condition(s)
+are met. 
+'''
 def jump(userInput, memory, compareList):
     jlString = ['jl','JL']
     jgString = ['jg','JG']
@@ -42,6 +67,20 @@ def jump(userInput, memory, compareList):
             return 1
     if userInput[0] in jmpString:
         return 1
+'''
+The operationCommands() function represents addition, subtraction, multiplication, division, and modulus operations.
+It takes in the userInput and RAM. Then it checks if the command given in the userInput is either of the different
+operators. It then checks for the four different cases for each command. An example command could be: ADD [1] [1] 1 
+
+It then checks for the different conditions being:
+[location1][location2]
+value [location2]
+[location1] value
+value value
+
+And do the operations correctly depending on the conditon.
+
+'''
 def operationCommands(userInput,memory):
     parameterOne = userInput[0]
     parameterTwo = userInput[1]
@@ -73,13 +112,13 @@ def operationCommands(userInput,memory):
         if (bracketString in parameterThree) and (bracketString in parameterFour): # this is [location1] - [location2]
             locationOne = strip(parameterThree,'[]')
             locationTwo = strip(parameterFour,'[]')
-            printValue = memory[locationTwo] - memory[locationOne]
+            printValue = memory[locationOne] - memory[locationTwo]
         elif(bracketString not in parameterThree and bracketString in parameterFour): # this is value1 (parameter3) - (p4)[location2]
             locationTwo = strip(parameterFour,'[]')
-            printValue =  memory[locationTwo] - int(parameterThree)
+            printValue =  int(parameterThree) - memory[locationTwo]
         elif(bracketString in parameterThree and bracketString not in parameterFour):# this is [location1](parameter3) - value2(p4)
             locationOne = strip(parameterThree,'[]')
-            printValue = parameterFour - memory[locationOne]
+            printValue = memory[locationOne] - int(parameterFour)
         else:
             printValue = parameterFour - parameterThree
     elif parameterOne in mulString:
@@ -96,9 +135,45 @@ def operationCommands(userInput,memory):
         else:
             printValue = parameterThree * parameterFour
     elif parameterOne in divString:
-        print("Hello")
-    memory[strip(parameterTwo,'[]')] = printValue
+        if (bracketString in parameterThree) and (bracketString in parameterFour):
+            locationOne = strip(parameterThree,'[]')
+            locationTwo = strip(parameterFour,'[]')
+            if memory[locationTwo] != 0: # checks if second value is zero or not
+                printValue = memory[locationOne] // memory[locationTwo]
+        elif(bracketString not in parameterThree and bracketString in parameterFour):
+            locationTwo = strip(parameterFour,'[]')
+            if memory[locationTwo] != 0:
+                printValue = int(parameterThree) // memory[locationTwo]
+        elif(bracketString in parameterThree and bracketString not in parameterFour):
+            locationOne = strip(parameterThree,'[]')
+            if int(parameterFour) != 0:
+                printValue = memory[locationOne] // int(parameterFour)
+        else:
+            if int(parameterFour) != 0:
+                printValue = parameterThree // parameterFour
+    else:
+        if (bracketString in parameterThree) and (bracketString in parameterFour):
+            locationOne = strip(parameterThree,'[]')
+            locationTwo = strip(parameterFour,'[]')
+            printValue = memory[locationOne] % memory[locationTwo]
+        elif(bracketString not in parameterThree and bracketString in parameterFour):
+            locationTwo = strip(parameterFour,'[]')
+            printValue = int(parameterThree) % memory[locationTwo]
+        elif(bracketString in parameterThree and bracketString not in parameterFour):
+            locationOne = strip(parameterThree,'[]')
+            printValue = memory[locationOne] % int(parameterFour)
+        else:
 
+            printValue = parameterThree % parameterFour
+    memory[strip(parameterTwo,'[]')] = printValue
+'''
+The moveCommand() function is used to move values within RAM. 
+It checks if the last parameter has brackets or not and 
+if it does have a bracket, will move according to the index 
+given in the parameters. If no brackets are given, it will
+move the given value to the index that is given following 
+the MOV command.
+'''
 def moveCommand(line,memory):
     bracketString = '['
     moveSource = line[2]
@@ -113,6 +188,12 @@ def moveCommand(line,memory):
     else:
         moveSource = int(line[2])
         memory[int(moveDestination)] = moveSource
+'''
+The compareCommand() is used to compare two given value or indexes of RAM.
+It takes in the line and the RAM and return a list that has two bools.
+In the form of [bool1, bool2] where bool1 represents if the value1 is 
+less than value2. And bool2 where it represents if value1 is equal to value2
+'''
 def compareCommand(line,memory):
     bracketString = '['
     lessThan = False
@@ -137,20 +218,32 @@ def compareCommand(line,memory):
     compareList.append(lessThan)
     compareList.append(equalTo)
     return compareList
-# def runCommands(line,memory, programMemory, compareList):
 
+'''
+This function is used to remove a given value from a string and return the given string as an int.
+'''
 def strip(string, value):
     returnValue = string.strip(value)
     return int(returnValue)
+'''
+This is the main function that acts as the computer. It checks the line command given against all the 
+avaliable commands and calls the correct functions for the commands.
 
+[randomMemory] - this is the RAM of the computer, it is a list that first starts off with value all equal to 0
+[programMemory] - this is the program memory that stores all the commands from the file
+[halt,cmp,mov,operation,j,cmp,int] string lists- these are all the lists for the commands that can be run in the program
+[compareList] - this is used to hold the return of the compareCommand() function
+[instructionCounter] - this keeps track of which line in programMemory we have ran. Each time a command is run, this
+incrememts up one.
+
+'''
 def computer(userInput):
     userInput = userInput.split()
     randomMemory = []
     programMemory = []
-    haltString = ['hlt','HLT']
+    haltString = 'hlt'
     compareList = []
     cmpString = ['cmp','CMP']
-    haltString = ['hlt','HLT']
     movString = ['mov','MOV']
     operationStrings = ['mod','MOD','div','DIV','mul','MUL','sub','SUB','add','ADD']
     jString = 'j'
@@ -158,7 +251,8 @@ def computer(userInput):
     intString = ['int','INT']
     instructionCounter = 0
     stopReading = False
-    for x in range(int(userInput[1])):
+    keepRunning = True
+    for x in range(int(userInput[1])): # initializes the RAM to specified size
         randomMemory.append(0)
     infile = open(userInput[0],'r')
 
@@ -171,35 +265,40 @@ def computer(userInput):
             programMemory.append(line)
             line = infile.readline().split()
 
-    while programMemory[instructionCounter] not in haltString:
-        if haltString not in programMemory[instructionCounter]:
-            line = programMemory[instructionCounter]
-            if (programMemory[instructionCounter][0] in intString):
-                interrupt(line,randomMemory)
-                if instructionCounter + 1 < len(programMemory):
+
+    while keepRunning:
+        line = programMemory[instructionCounter]
+        if (programMemory[instructionCounter][0] in intString): # for interrupt command
+            interrupt(line,randomMemory)
+            if instructionCounter + 1 < len(programMemory):
+                instructionCounter+=1
+        elif(programMemory[instructionCounter][0] in movString):# for move command
+            moveCommand(line,randomMemory)
+            if instructionCounter + 1 < len(programMemory):
+                instructionCounter+=1
+        elif(programMemory[instructionCounter][0] in cmpString):# for compare command
+            compareList = compareCommand(line,randomMemory)
+            if instructionCounter + 1 < len(programMemory):
+                instructionCounter+=1
+        elif(jString in programMemory[instructionCounter][0].lower()): # for jumping commands
+            if jump(line,randomMemory,compareList) == 1: # if condition for jump is met, this runs
+                jumpLine = programMemory[instructionCounter][1]
+                instructionCounter = int(jumpLine)
+            else:
+                if instructionCounter + 1 < len(programMemory): # if condition for jump is not met, this run
                     instructionCounter+=1
-            elif(programMemory[instructionCounter][0] in movString):
-                moveCommand(line,randomMemory)
-                if instructionCounter + 1 < len(programMemory):
-                    instructionCounter+=1
-            elif(programMemory[instructionCounter][0] in cmpString):
-                compareList = compareCommand(line,randomMemory)
-                if instructionCounter + 1 < len(programMemory):
-                    instructionCounter+=1
-            elif(jString in programMemory[instructionCounter][0].lower()):
-                if jump(line,randomMemory,compareList) == 1:
-                    jumpLine = programMemory[instructionCounter][1]
-                    instructionCounter = int(jumpLine)
-                else:
-                    if instructionCounter + 1 < len(programMemory):
-                        instructionCounter+=1
-            elif(programMemory[instructionCounter][0] in operationStrings):
-                operationCommands(line,randomMemory)
-                if instructionCounter + 1 < len(programMemory):
-                    instructionCounter+=1
+        elif(programMemory[instructionCounter][0] in operationStrings): # for the operation: add,sub,mul,div,mod
+            operationCommands(line,randomMemory)
+            if instructionCounter + 1 < len(programMemory):
+                instructionCounter+=1
+        if haltString in programMemory[instructionCounter][0].lower():
+            keepRunning = False
+            infile.close()
+
+
+
 
 
 if __name__ == '__main__':
-    userInput = 'fib.ret 20'
-
+    userInput = input("What file should we assemble, and what size of ram should we use? ")
     computer(userInput)
